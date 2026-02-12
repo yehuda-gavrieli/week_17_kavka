@@ -65,7 +65,19 @@ while True:
           salesRepEmployeeNumber,
           creditLimit)
         VALUES (%s, %s, %s,%s, %s, %s,%s, %s, %s,%s, %s, %s,%s, %s)"""
-        cursor.execute(sql, (data['customerNumber'], data['customerName'], data['contactLastName'], data['contactFirstName'], data['phone'], data['addressLine1'], data['addressLine2'], data['city'], data['state'],data['postalCode'],data['country'],data['salesRepEmployeeNumber'], data['creditLimit']))
+        cursor.execute(sql, (data['customerNumber'],
+                             data['customerName'], 
+                             data['contactLastName'],
+                             data['contactFirstName'],
+                             data['phone'],
+                             data['addressLine1'],
+                             data['addressLine2'], 
+                             data['city'],
+                             data['state'],
+                             data['postalCode'],
+                             data['country'],
+                             data['salesRepEmployeeNumber'],
+                             data['creditLimit']))
     
     elif data['type'] == 'order':
         sql = """INSERT IGNORE INTO orders 
@@ -77,7 +89,13 @@ while True:
         comments,
         customerNumber,) 
         VALUES (%s, %s, %s, %s, %s, %s, %s)"""
-        cursor.execute(sql, (data['orderNumber'],data['orderDate'],data['requiredDate'],data['shippedDate'], data['status'], data['comments'],data['customerNumber']))
+        cursor.execute(sql, (data['orderNumber'],
+                             data['orderDate'],
+                             data['requiredDate'],
+                             data['shippedDate'],
+                             data['status'], 
+                             data['comments'],
+                             data['customerNumber']))
     
     db_sql.commit()
 
