@@ -22,7 +22,6 @@ def run_producer():
         docs['_id'] = str(docs['_id']) 
         producer.produce('topic_transaction', json.dumps(docs).encode('utf-8'), callback=delivery_report)
         producer.flush()
-        print({docs.get('customerNumber')})
         time.sleep(0.5) 
 
 if __name__ == "__main__":
