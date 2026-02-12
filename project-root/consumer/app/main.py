@@ -7,7 +7,7 @@ db_sql = mysql.connector.connect(
     host="mysql",
     user="root",
     password="password",
-    database="analytics_db"
+    database="suspicious_sql"
 )
 cursor = db_sql.cursor()
 
