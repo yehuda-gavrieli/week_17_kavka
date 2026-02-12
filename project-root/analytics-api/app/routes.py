@@ -1,4 +1,5 @@
-from main import get_db_connection,app
+from main import app
+from connection import get_db_connection
 
 
 @app.get("/analytics/top-customers") 
@@ -18,7 +19,7 @@ def top_customers():
 
 
 @app.get("/analytics/customers-without-orders")
-def get_inactive_customers():
+def customers_without_orders():
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
     query = """SELECT customers.customerName FROM customers 

@@ -1,12 +1,8 @@
 import json
 import time
-from pymongo import MongoClient
+from mongo_connection import collection,mongo_client,db
 from confluent_kafka import Producer
 
-
-mongo_client = MongoClient("mongodb://mongodb:27017")
-db = mongo_client["suspicious_db"]
-collection = db["customers_orders"]
 
 kafka_config = {"bootstrap.servers": "localhost:9092"}
 producer = Producer(kafka_config)
