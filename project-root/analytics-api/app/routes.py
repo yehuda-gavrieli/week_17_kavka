@@ -19,6 +19,23 @@ def top_customers():
     conn.close()
     return result
 
+
+@app.get("/analytics/customers-without-orders")
+def get_inactive_customers():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    query = """
+    SELECT c.customerName
+    FROM customers c
+    LEFT JOIN orders o ON c.customerNumber = o.customerNumber
+    WHERE o.orderNumber IS NULL
+    """
+    cursor.execute(query)
+    result = cursor.fetchall()
+    conn.close()
+    return result
+
+
 @app.get("/analytics/zero-credit-active-customers") 
 def zero_credit():
     conn = get_db_connection()
@@ -33,3 +50,12 @@ def zero_credit():
     result = cursor.fetchall()
     conn.close()
     return result
+
+
+
+
+
+
+
+
+
