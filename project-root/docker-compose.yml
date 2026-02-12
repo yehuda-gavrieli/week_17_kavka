@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  kafka:
+    image: confluentinc/cp-kafka:7.8.3
+    container_name: kafka
+    ports:
+      - "9092:9092"
+
+    environment:
+      KAFKA_KRAFT_MODE: 'true'
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+
+  mysql:
+    image: mysql:latest
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: suspicious_db
+
+  producer:
+    build: ./producer
+    depends_on:
+      - mongodb
+      - kafka
+
+  consumer:
+    build: ./consumer
+    depends_on:
+      - kafka
+
+  analytics-api:
+    build: ./analytics-api
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mysql
