@@ -1,19 +1,16 @@
 from main import get_db_connection,app
 
 
-
 @app.get("/analytics/top-customers") 
 def top_customers():
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
-    query = """
-    SELECT c.customerName, COUNT(o.orderNumber) as order_count
-    FROM customers c
-    JOIN orders o ON c.customerNumber = o.customerNumber
-    GROUP BY c.customerNumber
-    ORDER BY order_count DESC
-    LIMIT 10
-    """
+    query = """SELECT customers.customerName, COUNT(orders.orderNumber) order_count
+            FROM customers 
+            JOIN orders ON customers.customerNumber = orders.customerNumber
+            GROUP BY customers.customerNumber
+            ORDER BY order_count DESC LIMIT 10"""
+
     cursor.execute(query)
     result = cursor.fetchall()
     conn.close()
@@ -24,12 +21,9 @@ def top_customers():
 def get_inactive_customers():
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
-    query = """
-    SELECT c.customerName
-    FROM customers c
-    LEFT JOIN orders o ON c.customerNumber = o.customerNumber
-    WHERE o.orderNumber IS NULL
-    """
+    query = """SELECT customers.customerName FROM customers 
+            LEFT JOIN orders ON customers.customerNumber = orders.customerNumber
+            WHERE orders.orderNumber IS NULL"""
     cursor.execute(query)
     result = cursor.fetchall()
     conn.close()
@@ -40,12 +34,10 @@ def get_inactive_customers():
 def zero_credit():
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
-    query = """
-    SELECT DISTINCT c.customerName
-    FROM customers c
-    JOIN orders o ON c.customerNumber = o.customerNumber
-    WHERE c.creditLimit = 0
-    """
+    query = """SELECT DISTINCT customers.customerName
+            FROM customers
+            JOIN orders ON customers.customerNumber = orders.customerNumber
+            WHERE customers.creditLimit = 0 """
     cursor.execute(query)
     result = cursor.fetchall()
     conn.close()

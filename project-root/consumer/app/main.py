@@ -27,26 +27,33 @@ CREATE TABLE IF NOT EXISTS orders (
 )
 """)
 
-conf = {
-    'bootstrap.servers': 'kafka:9092',
+consumer_config = {
+    'bootstrap.servers': 'localhost:9092',
     'group.id': 'my_group',
     'auto.offset.reset': 'earliest'
 }
-consumer = Consumer(conf)
-consumer.subscribe(['transactions_topic'])
+consumer = Consumer(consumer_config)
+consumer.subscribe(['topic_transaction'])
 
 while True:
     msg = consumer.poll(1.0)
-    if msg is None: continue
+    if msg is None:
+        continue
+    if msg.error():
+        print("❌ Error:", msg.error())
+        continue
     
     data = json.loads(msg.value().decode('utf-8'))
     
     if data['type'] == 'customer':
-        sql = "INSERT IGNORE INTO customers (customerNumber, customerName, creditLimit) VALUES (%s, %s, %s)"
+        sql = "INSERT INTO customers (customerNumber, customerName, creditLimit) VALUES (%s, %s, %s)"
         cursor.execute(sql, (data['customerNumber'], data['customerName'], data['creditLimit']))
     
     elif data['type'] == 'order':
-        sql = "INSERT IGNORE INTO orders (orderNumber, customerNumber, status) VALUES (%s, %s, %s)"
+        sql = "INSERT INTO orders (orderNumber, customerNumber, status) VALUES (%s, %s, %s)"
         cursor.execute(sql, (data['orderNumber'], data['customerNumber'], data['status']))
     
     db_sql.commit()
+
+
+
